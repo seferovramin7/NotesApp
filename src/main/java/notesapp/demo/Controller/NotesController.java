@@ -44,4 +44,11 @@ public class NotesController {
     }
 
 
+    @GetMapping("cache")
+    public String cleanCache(){
+        notesService.cacheRemover();
+        return "Cache is clean ! ";
+    }
+
+
 }

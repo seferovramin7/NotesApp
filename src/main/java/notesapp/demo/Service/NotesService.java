@@ -13,23 +13,26 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@CacheConfig(cacheNames = {"notes"})
+@CacheConfig(cacheNames = {"note"})
 @Service
 public class NotesService {
 
     @Autowired
     NotesRepository notesRepository;
 
-    @CachePut
+    @Autowired
+    CacheCleanerService cacheCleanerService;
+
+    @Cacheable(value = "note")
     public Note saveNote(Note note){
       return  notesRepository.save(note);
     }
 
-    @Cacheable
+    @Cacheable(value = "note")
     public Note getNote(Long noteId){
         try {
             // Sadece daha aydin olsun deye slowService yazdim
-            Thread.sleep(1000*5);
+            Thread.sleep(1000*3);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -37,22 +40,22 @@ public class NotesService {
                 () -> new ResourceNotFoundException("Note", "Id", noteId));
     }
 
-    @Cacheable
+    @Cacheable(value = "note")
     public List<Note> getAllNotes(){
         try {
             // Sadece daha aydin olsun deye slowService yazdim
-            Thread.sleep(1000*5);
+            Thread.sleep(1000*3);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         return notesRepository.findAll();
     }
 
-    @CachePut
+    @CachePut(value = "note")
     public Note updateNote(Note note, Long noteId){
         try {
             // Sadece daha aydin olsun deye slowService yazdim
-            Thread.sleep(1000*5);
+            Thread.sleep(1000*3);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -63,11 +66,11 @@ public class NotesService {
         return updatedNote;
     }
 
-    @CacheEvict
+    @CacheEvict(value = "note")
     public ResponseEntity<?> deleteNote(Long noteId){
         try {
             // Sadece daha aydin olsun deye slowService yazdim
-            Thread.sleep(1000*5);
+            Thread.sleep(1000*3);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -75,5 +78,11 @@ public class NotesService {
         notesRepository.delete(note1);
         return ResponseEntity.ok().build();
     }
+
+
+    public void cacheRemover(){
+        cacheCleanerService.evictAllcachesAtIntervals();
+    }
+
 
 }
