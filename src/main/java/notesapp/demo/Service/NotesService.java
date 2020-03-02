@@ -37,11 +37,25 @@ public class NotesService {
                 () -> new ResourceNotFoundException("Note", "Id", noteId));
     }
 
+    @Cacheable
     public List<Note> getAllNotes(){
+        try {
+            // Sadece daha aydin olsun deye slowService yazdim
+            Thread.sleep(1000*5);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return notesRepository.findAll();
     }
 
+    @CachePut
     public Note updateNote(Note note, Long noteId){
+        try {
+            // Sadece daha aydin olsun deye slowService yazdim
+            Thread.sleep(1000*5);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         Note note1 = notesRepository.findById(noteId).orElseThrow( () -> new ResourceNotFoundException("Note" , "Id" , noteId));
         note1.setContent(note.getContent());
         note1.setTitle(note.getTitle());
@@ -49,8 +63,14 @@ public class NotesService {
         return updatedNote;
     }
 
-    @CacheEvict(allEntries = true)
+    @CacheEvict
     public ResponseEntity<?> deleteNote(Long noteId){
+        try {
+            // Sadece daha aydin olsun deye slowService yazdim
+            Thread.sleep(1000*5);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         Note note1 = notesRepository.findById(noteId).orElseThrow( () -> new ResourceNotFoundException("Note" , "Id", noteId) );
         notesRepository.delete(note1);
         return ResponseEntity.ok().build();
