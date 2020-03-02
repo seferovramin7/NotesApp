@@ -49,7 +49,7 @@ public class NotesService {
         return updatedNote;
     }
 
-    @CacheEvict(key = "#note1")
+    @CacheEvict(allEntries = true)
     public ResponseEntity<?> deleteNote(Long noteId){
         Note note1 = notesRepository.findById(noteId).orElseThrow( () -> new ResourceNotFoundException("Note" , "Id", noteId) );
         notesRepository.delete(note1);
