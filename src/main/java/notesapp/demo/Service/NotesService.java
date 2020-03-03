@@ -4,16 +4,12 @@ import notesapp.demo.Exception.ResourceNotFoundException;
 import notesapp.demo.Model.Note;
 import notesapp.demo.Repository.NotesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@CacheConfig(cacheNames = {"note"})
 @Service
 public class NotesService {
 
@@ -23,12 +19,10 @@ public class NotesService {
     @Autowired
     CacheCleanerService cacheCleanerService;
 
-    @Cacheable(value = "note")
     public Note saveNote(Note note){
       return  notesRepository.save(note);
     }
 
-    @Cacheable(value = "note")
     public Note getNote(Long noteId){
         try {
             // Sadece daha aydin olsun deye slowService yazdim
@@ -36,26 +30,23 @@ public class NotesService {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return notesRepository.findById(noteId).orElseThrow(
-                () -> new ResourceNotFoundException("Note", "Id", noteId));
+        return notesRepository.findById(noteId).orElseThrow( () -> new ResourceNotFoundException("Note", "id", noteId) );
     }
 
-    @Cacheable(value = "note")
     public List<Note> getAllNotes(){
         try {
             // Sadece daha aydin olsun deye slowService yazdim
-            Thread.sleep(1000*3);
+            Thread.sleep(1000*2);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         return notesRepository.findAll();
     }
 
-    @CachePut(value = "note")
     public Note updateNote(Note note, Long noteId){
         try {
             // Sadece daha aydin olsun deye slowService yazdim
-            Thread.sleep(1000*3);
+            Thread.sleep(1000*2);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -66,11 +57,9 @@ public class NotesService {
         return updatedNote;
     }
 
-    @CacheEvict(value = "note")
     public ResponseEntity<?> deleteNote(Long noteId){
         try {
-            // Sadece daha aydin olsun deye slowService yazdim
-            Thread.sleep(1000*3);
+            Thread.sleep(1000*2);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -78,7 +67,6 @@ public class NotesService {
         notesRepository.delete(note1);
         return ResponseEntity.ok().build();
     }
-
 
     public void cacheRemover(){
         cacheCleanerService.evictAllcachesAtIntervals();
