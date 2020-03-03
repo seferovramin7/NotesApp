@@ -4,10 +4,7 @@ import notesapp.demo.Model.Note;
 import notesapp.demo.Repository.NotesRepository;
 import notesapp.demo.Service.NotesService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +25,7 @@ public class NotesController {
         return notesService.saveNote(note);
     }
 
-    @Cacheable(value = "notes", key = "#id")
+    @Cacheable(value = "note", key = "#id")
     @GetMapping("/get")
     public Note getNote(@RequestParam Long id){
        return notesService.getNote(id);
@@ -46,7 +43,9 @@ public class NotesController {
         return notesService.updateNote(note, noteId);
     }
 
-    @CacheEvict(value = "notes",  allEntries=true)
+    @Caching(evict = {
+            @CacheEvict(value="note", allEntries=true),
+            @CacheEvict(value="notes", allEntries=true)})
     @DeleteMapping("/delete/{noteId}")
     public ResponseEntity<?> deleteNote(@PathVariable(value = "noteId") Long id){
         return notesService.deleteNote(id);
